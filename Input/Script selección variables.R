@@ -94,7 +94,8 @@ label(df$frec_inter)<-"Intergroup contact frequency"
 ########################
 # Cantidad de contacto
 #######################
-
+library(polycor)
+polychor(df$cont_inter, df$frec_inter) #0.66
 df$quant_inter=(df$frec_inter + df$cont_inter)/2
 
 #######################
