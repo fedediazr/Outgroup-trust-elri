@@ -40,8 +40,14 @@ df$presn_cwc<- df$presn-df$presn_group
 summary(df$presn_cwc)
 summary(df$presn_group)
 
-# Descriptive statistics--------------------------------------------------------
-
+# Descriptive statistic --------------------------------------------------------
+library(dplyr)
+## Attrition
+df %>%
+  group_by(ola) %>%
+  summarise(n_people = n_distinct(folio)) %>%
+  arrange(ola) %>%
+  mutate(attrition_from_wave1 = 1 - n_people / first(n_people))
 
 ## Intraclass correlation-------------------------------------------------------
 df_cl<-subset(df, indigena_es=="No indígena")
