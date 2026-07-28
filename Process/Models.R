@@ -1,6 +1,6 @@
 #Multilevel models--------------------------------------------------------------
-library(dplyr)
 rm(list=ls())
+library(dplyr)
 getwd()
 load("Input/Base_multinivel.Rdata")
 
