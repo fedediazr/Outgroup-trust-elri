@@ -1,0 +1,178 @@
+================================================================================
+              ATTRITION ANALYSIS R MARKDOWN REPORT - SUMMARY
+================================================================================
+
+DOCUMENT CREATED: Output/Attrition_Analysis_Report.Rmd (R Markdown source)
+RENDERED OUTPUT: Output/Attrition_Analysis_Report.html (Interactive HTML)
+
+================================================================================
+REPORT CONTENTS
+================================================================================
+
+1. EXECUTIVE SUMMARY
+   - Overall retention rate: 34.0% (1,230 retained from 3,617)
+   - Key findings at a glance
+
+2. OVERALL RETENTION OVERVIEW
+   - Table showing: N retained, N lost, percentages
+
+3. DEMOGRAPHIC CHARACTERISTICS BY RETENTION STATUS
+
+   a) Indigenous Status (Strongest Predictor)
+      - Contingency table with retention rates by ethnicity
+      - Statistical test results (χ² = 109.72, p < 0.001)
+      - Effect size: Cramér's V = 0.174 (moderate)
+      - Interpretation: Indigenous 42.2% retained vs. Non-indigenous 25.6%
+      - Implication: Retained sample overrepresents indigenous participants
+
+   b) Gender (Moderate Predictor)
+      - Contingency table by gender
+      - Statistical test results (χ² = 35.10, p < 0.001)
+      - Effect size: Cramér's V = 0.099
+      - Retention: Female 37.5% vs. Male 27.7%
+
+   c) Age (Small-to-Moderate Predictor)
+      - Descriptive statistics by retention status
+      - Statistical test results (t = -3.72, p < 0.001)
+      - Effect size: Cohen's d = -0.130
+      - Retained mean age: 46.6 years vs. Lost: 48.8 years
+
+   d) Education Level (No Significant Difference)
+      - Contingency table across education levels
+      - Statistical test: χ² = 8.51, p = 0.579 (ns)
+      - Conclusion: Education NOT a source of attrition bias
+
+4. PSYCHOLOGICAL AND BEHAVIORAL VARIABLES
+
+   a) Outgroup Trust - PRIMARY OUTCOME (No Bias - Excellent for Validity!)
+      - Descriptive statistics by retention status
+      - Statistical test: t = -1.51, p = 0.130 (ns)
+      - Effect size: Cohen's d = -0.054 (negligible)
+      - Interpretation: No significant difference—unbiased baseline
+
+   b) Intergroup Contact Frequency (Significant Predictor)
+      - Descriptive statistics by retention status
+      - Statistical test: t = 4.10, p < 0.001
+      - Effect size: Cohen's d = 0.145 (small)
+      - Retained: M = 3.61 vs. Lost: M = 3.42
+      - Interpretation: Higher frequency predicts retention (selection bias)
+
+   c) Contact Quantity - Number of Acquaintances (Marginal)
+      - Descriptive statistics by retention status
+      - Statistical test: t = 1.71, p = 0.087 (marginal, ns)
+      - Effect size: Cohen's d = 0.062 (negligible)
+
+5. DESCRIPTIVE CHARACTERISTICS OF RETAINED SAMPLE BY ETHNICITY
+
+   a) Indigenous Participants (Retained)
+      - N individuals
+      - Gender breakdown with percentages
+      - Age statistics (mean, SD, median, range)
+      - Outgroup trust, contact frequency, quality, negative contact
+      - All with means and standard deviations
+
+   b) Non-Indigenous Participants (Retained)
+      - Identical descriptive statistics
+      - Same variables and format as indigenous group
+
+   c) Comparison Table: Retained Indigenous vs. Non-Indigenous
+      - Side-by-side comparison of key characteristics
+      - Proportion of each group in retained sample
+      - Demographic and psychological variables
+      - Shows representation differences between ethnic groups
+
+6. SUMMARY OF ATTRITION FINDINGS
+   - Master table ranking all predictors by significance
+   - Variables, types, test statistics, p-values, effect sizes
+   - Implications for each predictor
+   - Color-coded for significance levels
+
+7. RECOMMENDATIONS FOR ANALYSIS
+   - Statistical adjustment methods (IPW, stratification)
+   - Sensitivity analyses (MAR assumption, bounding)
+   - Longitudinal modeling considerations
+   - Interpretation guidance highlighting strengths and concerns
+
+8. CONCLUSION
+   - Overall summary of attrition patterns
+   - Reassurance about primary outcome (outgroup trust)
+   - Call for statistical adjustment due to demographic bias
+   - Best practice recommendations
+
+================================================================================
+KEY TABLES AND STATISTICS IN REPORT
+================================================================================
+
+DEMOGRAPHIC PREDICTORS:
+1. Indigenous Status:      42.2% vs. 25.6% retention (χ² = 109.72***)
+2. Gender:                 37.5% vs. 27.7% retention (χ² = 35.10***)
+3. Age:                    46.6 vs. 48.8 years (t = -3.72***)
+4. Education:              63.9-72.4% retention (χ² = 8.51, ns)
+
+PSYCHOLOGICAL/BEHAVIORAL:
+5. Contact Frequency:      3.61 vs. 3.42 (t = 4.10***)
+6. Outgroup Trust:         3.42 vs. 3.47 (t = -1.51, ns) ✓
+7. Contact Quantity:       2.78 vs. 2.71 (t = 1.71, marginal)
+
+RETAINED SAMPLE DESCRIPTIVES (by ethnicity):
+- Indigenous: 771 individuals (62.7% of retained sample)
+  Mean age: ~46 years, ~71% female, similar trust levels to non-indigenous
+  Higher contact frequency
+
+- Non-indigenous: 459 individuals (37.3% of retained sample)
+  Mean age: ~47 years, ~71% female, similar trust levels to indigenous
+  Lower contact frequency
+
+================================================================================
+FEATURES OF THE R MARKDOWN DOCUMENT
+================================================================================
+
+✓ Professional HTML output with:
+  - Table of contents (clickable navigation)
+  - Interactive floating TOC panel
+  - Flatly theme with tango code highlighting
+  - Numbered sections
+  - Bootstrap-styled tables with zebra striping
+  - Responsive design
+
+✓ All calculations done in R chunks:
+  - Automatic updates if data changes
+  - Fully reproducible code
+  - Statistical tests embedded
+  - Effect sizes calculated inline
+  - Custom interpretation for each variable
+
+✓ Complete sample descriptions:
+  - Retained sample broken down by ethnicity
+  - All key demographics and psychological variables
+  - Side-by-side ethnic group comparison
+  - Percentages and proportions with counts
+
+✓ Ready for publication/sharing:
+  - Stand-alone HTML file (no external dependencies)
+  - Professional formatting
+  - Clear interpretive guidance
+  - Recommendations for next steps
+
+================================================================================
+HOW TO USE THIS REPORT
+================================================================================
+
+1. OPEN IN BROWSER:
+   Navigate to Output/Attrition_Analysis_Report.html
+   View formatted report with interactive navigation
+
+2. SHARE WITH COLLABORATORS:
+   Can send HTML file directly - no dependencies required
+   Each reader can navigate and review findings interactively
+
+3. MODIFY FOR PUBLICATION:
+   Edit Output/Attrition_Analysis_Report.Rmd to customize
+   Render again with: rmarkdown::render("Output/Attrition_Analysis_Report.Rmd")
+
+4. INTEGRATE INTO MANUSCRIPT:
+   Copy tables/figures directly from HTML
+   Reference findings in methods/results sections
+   Use recommendations to guide statistical adjustments
+
+================================================================================
