@@ -42,15 +42,35 @@ df$presn_cwc<- df$presn-df$presn_group
 summary(df$presn_cwc)
 summary(df$presn_group)
 
-# Descriptive statistic --------------------------------------------------------
+# Descriptive statistic IPW --------------------------------------------------------
 library(dplyr)
-## Attrition
-df %>%
-  group_by(ola) %>%
-  summarise(n_people = n_distinct(folio)) %>%
-  arrange(ola) %>%
-  mutate(attrition_from_wave1 = 1 - n_people / first(n_people))
+## IPW
+summary(df$sipw)
+## Save summary statistics to a word table
+library(flextable)
+library(officer)
 
+# Compute summary statistics
+stats <- summary(df$sipw)
+
+stats_df <- data.frame(
+  Statistic = names(stats),
+  Value     = round(as.numeric(stats), 3)
+)
+
+# Build the table
+ft <- flextable(stats_df)
+ft <- set_caption(ft, "Summary Statistics for sipw")
+ft <- autofit(ft)
+
+# Make sure the output folder exists
+
+# Create Word doc and add the table
+doc <- read_docx()
+doc <- body_add_flextable(doc, ft)
+
+# Export
+print(doc, target = "Output/sensitivity analysis/sipw_summary.docx")
 ## Intraclass correlation-------------------------------------------------------
 df_cl<-subset(df, indigena_es=="No indígena")
 df_ind<-subset(df, indigena_es=="Indígena")
