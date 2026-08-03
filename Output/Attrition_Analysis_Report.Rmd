@@ -28,7 +28,16 @@ library(knitr)
 library(kableExtra)
 
 # Load data
-df <- read_dta("../Input/BBDD_ELRI_LONG.dta")
+df <- read_dta("Input/BBDD_ELRI_LONG.dta")
+
+# Select sample by filtering incosnsitent respondents
+
+df <- df %>%
+  group_by(folio) %>%
+  mutate(same_a1 = all(a1 == first(a1))) %>%
+  ungroup()
+
+df<-subset(df, same_a1==TRUE)
 
 # Create variable to identify people with at least 3 observations
 df <- df %>%
@@ -40,7 +49,7 @@ df <- df %>%
   mutate(indigena_es = case_when(
     a1 >= 12 ~ "No indígena",
     a1 < 12   ~ "Indígena"))
-
+library(misty)
 df <- as.na(df, na = c(66, 88, 99, 8888, 9999))
 
 # Create intergroup trust variable
@@ -50,7 +59,7 @@ df <- df %>%
   mutate(conf_inter = ifelse(indigena_es == "Indígena", c2, conf_inter))
 df <- df %>%
   mutate(conf_inter = ifelse(indigena_es == "No indígena", c5, conf_inter))
-label(df$conf_inter) <- "Trust in Outgroup"
+#label(df$conf_inter) <- "Trust in Outgroup"
 
 # Create ingroup trust
 df$conf_ingroup <- NA
@@ -58,7 +67,7 @@ df <- df %>%
   mutate(conf_ingroup = ifelse(indigena_es == "No indígena", c2, conf_ingroup))
 df <- df %>%
   mutate(conf_ingroup = ifelse(indigena_es == "Indígena", c5, conf_ingroup))
-label(df$conf_ingroup) <- "Ingroup trust"
+#label(df$conf_ingroup) <- "Ingroup trust"
 
 # Contact quantity
 df$cont_inter <- NA
@@ -66,7 +75,7 @@ df <- df %>%
   mutate(cont_inter = ifelse(indigena_es == "Indígena", c7_1, cont_inter))
 df <- df %>%
   mutate(cont_inter = ifelse(indigena_es == "No indígena", c12, cont_inter))
-label(df$cont_inter) <- "Number of acquaintances"
+#label(df$cont_inter) <- "Number of acquaintances"
 
 # Contact frequency
 df$frec_inter <- NA
@@ -74,7 +83,7 @@ df <- df %>%
   mutate(frec_inter = ifelse(indigena_es == "Indígena", c7_2, frec_inter))
 df <- df %>%
   mutate(frec_inter = ifelse(indigena_es == "No indígena", c13, frec_inter))
-label(df$frec_inter) <- "Intergroup contact frequency"
+#label(df$frec_inter) <- "Intergroup contact frequency"
 
 # Contact quantity index
 df$quant_inter <- (df$frec_inter + df$cont_inter) / 2
@@ -85,7 +94,7 @@ df <- df %>%
   mutate(calidad_inter = ifelse(indigena_es == "Indígena", c7_3, calidad_inter))
 df <- df %>%
   mutate(calidad_inter = ifelse(indigena_es == "No indígena", c14, calidad_inter))
-label(df$calidad_inter) <- "Intergroup contact quality"
+#label(df$calidad_inter) <- "Intergroup contact quality"
 
 # Negative contact
 df$neg_inter <- NA
@@ -93,7 +102,7 @@ df <- df %>%
   mutate(neg_inter = ifelse(indigena_es == "Indígena", c8, neg_inter))
 df <- df %>%
   mutate(neg_inter = ifelse(indigena_es == "No indígena", c15, neg_inter))
-label(df$neg_inter) <- "Frequency of negative intergroup contact"
+#label(df$neg_inter) <- "Frequency of negative intergroup contact"
 
 # Prescriptive norms
 df$presn <- NA
@@ -101,7 +110,7 @@ df <- df %>%
   mutate(presn = ifelse(indigena_es == "Indígena", c26_2, presn))
 df <- df %>%
   mutate(presn = ifelse(indigena_es == "No indígena", c26_1, presn))
-label(df$presn) <- "Prescriptive norms toward outgroup"
+#label(df$presn) <- "Prescriptive norms toward outgroup"
 
 # Fix demographic variables at baseline
 df <- df %>%
@@ -115,18 +124,16 @@ df <- df %>%
 
 # Select Wave 1 data for attrition analysis
 df_w1 <- df |> filter(ola == 1)
-
+class(df_w1$retained)
 # Create retention status variable
 # Retained sample includes participants with at least 3 waves
 # Lost to follow-up includes participants with fewer than 3 waves
+
 df_w1 <- df_w1 |> 
   mutate(
     retained = three_obs,
     retained_label = ifelse(retained, "Retained", "Lost to Follow-up")
   )
-
-# Remove same_a1 if present; retention is only based on three_obs
-df_w1$same_a1 <- NULL
 ```
 
 # Executive Summary
@@ -322,6 +329,7 @@ cat("**Statistical Test:** χ² =", round(chi_g32_1$statistic, 2),
 ## Outgroup Trust (Primary Outcome - No Bias)
 
 ```{r conf-inter-attrition}
+
 attrition_conf_inter <- df_w1 |> 
   filter(!is.na(conf_inter)) |> 
   group_by(retained_label) |> 
@@ -364,6 +372,7 @@ cat("**Statistical Test:** t =", round(t_result_conf$statistic, 2),
 ## Intergroup Contact Frequency (Significant Predictor)
 
 ```{r frec-inter-attrition}
+
 attrition_frec_inter <- df_w1 |> 
   filter(!is.na(frec_inter)) |> 
   mutate(frec_inter_num = as.numeric(frec_inter)) |>
@@ -404,6 +413,7 @@ cat("**Statistical Test:** t =", round(t_result_frec$statistic, 2),
 ## Contact Quantity - Number of Acquaintances (Marginal)
 
 ```{r cont-inter-attrition}
+
 attrition_cont_inter <- df_w1 |> 
   filter(!is.na(cont_inter)) |> 
   group_by(retained_label) |> 

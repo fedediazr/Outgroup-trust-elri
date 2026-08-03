@@ -5,6 +5,7 @@
 
 # Load df
 rm(list=ls())
+set.seed(202578)
 getwd()
 library(haven)
 library(misty)
@@ -156,10 +157,54 @@ df <- df %>%
   ) %>%
   ungroup()
 
+#####################################
+# Inverse probability weights (IPW)
+#####################################
+
+# Create variable to identify people with at least 3 observations
+df <- df %>%
+  group_by(folio) %>%
+  mutate(three_obs = all(n_distinct(ola) >= 3)) |> ungroup()
+
+df_w1 <- df |> filter(ola == 1)
+df_w1 <- df_w1 |> 
+  mutate(
+    retained = three_obs,
+    retained_label = ifelse(retained, 1, 0)
+  )
+
+library(mice)
+df_w1<-dplyr::select(df_w1, folio, retained_label, indigena_es, g2, g18, g32_1, conf_inter, conf_ingroup, cont_inter, frec_inter, calidad_inter, neg_inter, presn)
+imp <- mice(df_w1[2:13], m = 20, method = "pmm")  # or appropriate methods per variable type
+fit_list <- with(imp, glm(retained_label ~ indigena_es + g2 + g18 + g32_1 + conf_inter + 
+                            conf_ingroup + cont_inter + frec_inter + calidad_inter + 
+                            neg_inter + presn, 
+                          family = binomial))
+pooled <- pool(fit_list)
+summary(pooled)
+
+pred_list <- lapply(1:imp$m, function(i) {
+  d <- complete(imp, i)
+  predict(fit_list$analyses[[i]], newdata = d, type = "response")
+})
+
+pred_matrix <- do.call(cbind, pred_list)   # N x m matrix
+p_retained  <- rowMeans(pred_matrix) 
+
+p_marginal <- mean(df_w1$retained_label, na.rm = TRUE)
+
+sipw <- ifelse(
+  df_w1$retained_label == 1,
+  p_marginal / p_retained,
+  (1 - p_marginal) / (1 - p_retained)
+)
+
+df_w1$sipw <- sipw
+df_sipw <- df_w1 |> select(folio, sipw)
+df<-merge(df, df_sipw, by = "folio", all.x = TRUE)
 df<-dplyr::select(df, folio, ola, urbano_rural, g2, g18, g32_1, a1, 
                   indigena_es, conf_inter, conf_ingroup, cont_inter, frec_inter, quant_inter, calidad_inter, 
-                  neg_inter, presn, same_a1, pond)
-
+                  neg_inter, presn, same_a1, pond, sipw, three_obs)
 
 save(df, file = "Input/Base_multinivel.rdata")
 
