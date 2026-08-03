@@ -182,7 +182,27 @@ fit_list <- with(imp, glm(retained_label ~ indigena_es + g2 + g18 + g32_1 + conf
                           family = binomial))
 pooled <- pool(fit_list)
 summary(pooled)
+pooled_summary <- summary(pooled, conf.int = TRUE)
 
+# Build a clean results table with OR and 95% CI
+results_df <- pooled_summary %>%
+  mutate(
+    OR       = exp(estimate),
+    CI_lower = exp(`2.5 %`),
+    CI_upper = exp(`97.5 %`),
+    p.value  = ifelse(p.value < 0.001, "<0.001", sprintf("%.3f", p.value))
+  ) %>%
+  transmute(
+    Variable = term,
+    OR       = sprintf("%.2f", OR),
+    `95% CI` = sprintf("%.2f–%.2f", CI_lower, CI_upper),
+    `p-value` = p.value
+  )
+#Export table to excel
+library(openxlsx)
+write.xlsx(results_df, "Output/sensitivity analysis/results_table.xlsx", rowNames = FALSE)
+
+#Calculate IPW
 pred_list <- lapply(1:imp$m, function(i) {
   d <- complete(imp, i)
   predict(fit_list$analyses[[i]], newdata = d, type = "response")
